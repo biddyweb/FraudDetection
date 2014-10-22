@@ -1,0 +1,2 @@
+CREATE sequence hibernate_sequence START WITH 100;
+CREATE TABLE payment("id" INTEGER not null primary key, "name" VARCHAR(100), "email" VARCHAR(100), "rules_outcome" VARCHAR(1024),"currency" VARCHAR(40), "insurance_number" VARCHAR(25), "decision" VARCHAR(30), "score" INTEGER, "total_amount" NUMERIC (10,2), "country_cc" VARCHAR(90),"country_order" VARCHAR(90),"invoice_date" timestamp with time zone NOT NULL);

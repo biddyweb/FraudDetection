@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<!-- Declares the root element that allows behaviour to be modified through Angular custom HTML tags. -->
+<html lang="en" ng-app="insureds">
+<head>
+<title>Insurance</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- build:css css/third-party.css -->
+<!-- bower:css -->
+<link rel="stylesheet" href="css/bootstrap.css" type="text/css" />
+<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" />
+<link rel="stylesheet" href="css/screen.css" type="text/css" />
+
+
+<link rel="stylesheet" href="lib/dependencies/css/ng-grid.min.css" />
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:css css/application.css -->
+<link rel="stylesheet" type="text/css" href="css/style.css" />
+<!-- endbuild -->
+
+<!-- build:js lib/third-party.js -->
+<!-- bower:js -->
+<script src="lib/dependencies/jquery-2.0.3.js"></script>
+<script src="lib/dependencies/angular.js"></script>
+<script src="lib/dependencies/angular-resource.js"></script>
+<script src="lib/dependencies/ng-grid-2.0.11.min.js"></script>
+<script src="lib/dependencies/ui-bootstrap-tpls.min.js"></script>
+<script src="lib/dependencies/angular-route.js"></script>
+<script src="lib/dependencies/dynamic-forms.js"></script>
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js script/all.js -->
+<script src="script/insured.js"></script>
+<!-- endbuild -->
+<!-- Load the services we have defined for the application, particularly the REST services -->
+<script src="script/services.js"></script>
+</head>
+
+<body>
+	<section id="container" class="container">
+		<div class="col-xs-12 col-sm-12 col-md-12">
+			<h1>JBoss BRMS - Payments demo</h1>
+		</div>
+		<br />
+		<!-- Specify a Angular controller script that binds Javascript variables to the feedback messages.-->
+		<div class="message" ng-controller="alertMessagesController">
+			<alert ng-repeat="alert in alerts" type="{{alert.type}}"
+				close="closeAlert($index)">{{alert.msg}}</alert>
+		</div>
+		<br>
+		<!-- Specify a Angular controller script that binds Javascript variables to the grid.-->
+		<div class="grid" ng-controller="personsListController">
+			<div>
+				<h3>List payment requests</h3>
+			</div>
+
+			<!-- Binds the grid component to be displayed. -->
+			<div class="gridStyle" ng-grid="gridOptions"></div>
+
+			<!--  Bind the pagination component to be displayed. -->
+			<pagination direction-links="true" boundary-links="true"
+				total-items="insureds.totalResults"
+				items-per-page="insureds.pageSize" ng-model="insureds.currentPage"
+				ng-change="refreshGrid()"> </pagination>
+			<div>
+				</br>
+			</div>
+			<div>
+				<button type="submit" class="btnbtn-success btn-lgbtn-block"
+					ng-click="refreshRules()">
+					<span class="glyphiconglyphicon-flash"></span> Fire rules!
+				</button>
+			</div>
+
+
+		</div>
+
+
+
+		<!-- Specify a Angular controller script that binds Javascript variables to the form.-->
+
+		<div class="form" ng-controller="personsFormController">
+			<!-- Verify person, if there is no id present, that we are Adding a Person -->
+			<div ng-if="insured.id == null">
+				<h3>Add new payment</h3>
+			</div>
+			<!-- Otherwise it's an Edit -->
+			<div ng-if="insured.id != null">
+				<h3>Edit payment</h3>
+			</div>
+
+			<div>
+				<!-- Specify the function to be called on submit and disable HTML5 validation, since we're using Angular validation-->
+				<form name="personForm" ng-submit="updatePerson()" novalidate>
+
+					<!-- Display an error if the input is invalid and is dirty (only when someone changes the value) -->
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.name.$invalid && personForm.name.$dirty}">
+						<label for="name">Name*:</label>
+						<!-- Display a check when the field is valid and was modified -->
+						<span
+							ng-class="{'glyphicon glyphicon-ok' : personForm.name.$valid && personForm.name.$dirty}">
+						</span> <input id="name" name="name" type="text" class="form-control"
+							maxlength="40" ng-model="insured.name" required ng-minlength="2"
+							ng-maxlength="40" style="width: 200px;" />
+
+						<!-- Validation messages to be displayed on required, minlength and maxlength -->
+						<p class="help-block"
+							ng-show="personForm.name.$error.required && !personForm.name.$pristine">Add
+							Name.</p>
+						<p class="help-block" ng-show="personForm.name.$error.minlength">Name
+							must be at least 2 characters long.</p>
+						<p class="help-block" ng-show="personForm.name.$error.maxlength">Name
+							cannot be longer than 50 characters.</p>
+					</div>
+
+
+
+					<!-- Display an error if the input is invalid and is dirty (only when someone changes the value) -->
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.description.$invalid && personForm.description.$dirty}">
+						<label for="email">Email*:</label>
+						<!-- Display a check when the field is valid and was modified -->
+						<span
+							ng-class="{'glyphicon glyphicon-ok' : personForm.email.$valid && personForm.email.$dirty}"></span>
+
+						<input id="email" name="email" type="text" class="form-control"
+							maxlength="15" ng-model="insured.email" required ng-minlength="5"
+							ng-maxlength="20" style="width: 200px;" />
+
+						<!-- Validation messages to be displayed on required, minlength and maxlength -->
+						<p class="help-block"
+							ng-show="personForm.email.$error.required && !personForm.name.$pristine"">Add
+							Email.</p>
+						<p class="help-block" ng-show="personForm.email.$error.minlength">Email
+							must be at least 3 characters long.</p>
+						<p class="help-block" ng-show="personForm.email.$error.maxlength">Email
+							cannot be longer than 100 characters.</p>
+					</div>
+
+					<!-- Display an error if the input is invalid and is dirty (only when someone changes the value) -->
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.insuranceNumber.$invalid && personForm.insuranceNumber.$dirty}">
+						<label for="insuranceNumber">Credit Card Number*:</label>
+						<!-- Display a check when the field is valid and was modified -->
+						<span
+							ng-class="{'glyphicon glyphicon-ok' : personForm.insuranceNumber.$valid && personForm.insuranceNumber.$dirty}"></span>
+
+						<input id="insuranceNumber" name="insuranceNumber" type="text"
+							class="form-control" maxlength="5"
+							ng-model="insured.insuranceNumber" required ng-minlength="5"
+							ng-maxlength="5" style="width: 200px;" />
+
+						<!-- Validation messages to be displayed on required and invalid. Type 'url' makes checks to a proper url format. -->
+						<p class="help-block"
+							ng-show="personForm.insuranceNumber.$error.required && !personForm.name.$pristine"">Add
+							insurance number.</p>
+						<p class="help-block"
+							ng-show="personForm.insuranceNumber.$error.minlength">Insureance
+							number must be at least 5 characters long.</p>
+						<p class="help-block"
+							ng-show="personForm.insuranceNumber.$error.maxlength">Insurance
+							cannot be longer than 5 characters.</p>
+
+					</div>
+					
+										<!-- Display an error if the input is invalid and is dirty (only when someone changes the value) -->
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.totalAmount.$invalid && personForm.totalAmount.$dirty}">
+						<!-- Display a check when the field is valid and was modified -->
+						<span
+							ng-class="{'glyphicon glyphicon-ok' : personForm.totalAmount.$valid && personForm.totalAmount.$dirty}"></span>
+
+						<label for="totalAmount">Total amount:</label> <input
+							id="totalAmount" name="totalAmount" type="text"
+							class="totalAmount" maxlength="6" ng-model="insured.totalAmount"
+							style="width: 200px;" />
+
+					</div>
+					
+
+					<!-- Display an error if the input is invalid and is dirty (only when someone changes the value) -->
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.invoiceDate.$invalid && personForm.invoiceDate.$dirty}">
+
+
+						<label for="invoiceDate">Invoice date:</label> <input type="text"
+							class="form-control" datepicker-popup="dd-MMMM-yyyy"
+							ng-model="insured.invoiceDate" is-open="startDateOpened"
+							datepicker-options="dateOptions" close-text="Close"
+							placeholder="Start date" style="width: 200px;"
+							button" class="btn btn-sm btn-default"
+							ng-click="openStartDate($event)"><i
+							class="glyphicon glyphicon-calendar"></i>
+						</button>
+
+
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.nif.$invalid && personForm.nif.$dirty}">
+						<label for="nif" style="width: 200px">Company*:</label>
+						 <select dynamic-field-type="select" ng-model="insured.nif">
+							<!-- You can have ONE default, null selection option. -->
+							<option value="">- - Make Selection - -</option>
+							<option>VISA</option>
+							<option>American Express</option>
+							<option>Mastercard</option>
+							<option>TR</option>
+						</select>
+					</div>
+
+					<div class="form-group"
+						ng-class="{'has-error' : personForm.countryCC.$invalid && personForm.countryCC.$dirty}">
+						<label for="countryCC"  style="width:220px" >Country of credit card:</label>
+						 <select dynamic-field-type="select" ng-model="insured.countryCC">
+							<!-- You can have ONE default, null selection option. -->
+							<option value="">- - Make Selection - -</option>
+							<option>Spain</option>
+							<option>Canada</option>
+							<option>Autralia</option>
+						</select>
+					</div>
+	
+	               <div class="form-group"
+						ng-class="{'has-error' : personForm.countryOrder.$invalid && personForm.countryOrder.$dirty}">
+						<label for="countryOrder" style="width:220px" >Location of order:</label>
+						 <select dynamic-field-type="select" ng-model="insured.countryOrder">
+							<!-- You can have ONE default, null selection option. -->
+							<option value="">- - Make Selection - -</option>
+							<option>Spain</option>
+							<option>Canada</option>
+							<option>Antartic</option>
+						</select>
+					</div>
+	
+					<!-- Form buttons. The 'Save' button is only enabled when the form is valid. -->
+					<div class="buttons">
+						<button type="button" class="btn btn-primary"
+							ng-click="clearForm()">Clear</button>
+						<button type="submit" class="btn btn-primary"
+							ng-disabled="personForm.$invalid">Save</button>
+					</div>
+
+				</form>
+			</div>
+
+		</div>
+		<footer id="footer">
+			<p>
+				This is a demo of BRMS any question to sgutierr@redhat.com JBoss.<br />
+			</p>
+		</footer>
+	</section>
+</body>
+</html>
