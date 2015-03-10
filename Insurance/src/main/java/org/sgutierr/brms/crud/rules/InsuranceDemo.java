@@ -13,9 +13,8 @@ import org.sgutierr.brms.servlet.BRMSServlet;
  */
 public class InsuranceDemo {
 	
-	public static BlackList blackList;
-	public WhiteList whiteList;
-	
+
+
     public static final void main(String[] args) {
         try {
     	
