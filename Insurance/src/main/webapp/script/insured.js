@@ -75,7 +75,7 @@ app.controller('personsListController', function ($scope, $rootScope, personServ
 		console.log("refreshEvents()");
 
 
-		$http.jsonp('http://localhost:8080/model-1.0/brmsGUI?callback=JSON_CALLBACK').success(function(data, status, headers, config) {
+		$http.jsonp('http://localhost:8080/fraud-detection-1.0/brmsGUI?callback=JSON_CALLBACK').success(function(data, status, headers, config) {
 			// this callback will be called asynchronously
 			// when the response is available
 
