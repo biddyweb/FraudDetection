@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sgutierr.brms</groupId>
-  <artifactId>InsuranceModel</artifactId>
+  <artifactId>FraudDetectionModel</artifactId>
   <version>1.0_Final</version>
   <packaging>jar</packaging>
 
-  <name>InsuranceModel</name>
+  <name>FraudDetectionModel</name>
   <url>http://maven.apache.org</url>
 
      <properties>
